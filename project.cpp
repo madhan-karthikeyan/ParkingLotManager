@@ -26,10 +26,11 @@ private:
     string VehicleColor;
     string VehicleType;
     bool Membership;
-    bool parked;
+    bool Parked;
     string SlotNo;
 public:
     void addVehicle();
+    void displayVehicle();
 };
 
 class Car : private Vehicle {
@@ -62,6 +63,25 @@ void Vehicle::addVehicle() {
     }
 }
 
+void Vehicle::displayVehicle() {
+    cout << "License ID: " << LicenseId << endl;
+    cout << "Vehicle Model: " << VehicleModel << endl;
+    cout << "Vehicle Color: " << VehicleColor << endl;
+    cout << "Vehicle Type: " << VehicleType << endl;
+    if (Membership==true) {
+        cout << "Membership: " << "Yes" << endl;
+    } else {
+        cout << "Membership: " << "No" << endl;
+    }
+
+    // if (Parked==true) {
+    //     cout << "Vehicle is parked: " << "Yes" << endl;
+    // } else {
+    //     cout << "Vehicle is parked: " << "No" << endl;
+    // }
+    
+}
+
 class Slot {
 private:
     string SlotNo;
@@ -71,7 +91,6 @@ private:
 
 class Customer {
 private: 
-    int CustomerId;
     string Name;
     int Age;
     char Gender;
@@ -84,15 +103,14 @@ private:
 public:
     void addUser();
     void displayUser();
-    void registerCar();
+    void registerVehicle();
+    // void showVehilce();
 };
 // Customer Class functions here...
 void Customer::addUser() {
     string op;
     cout << "Enter name: ";
     getline(cin, Name);
-    cout << "Create a User ID: ";
-    cin >> CustomerId;
     cout << "Enter age: ";
     cin >> Age;
     cout << "Enter Gender (M or F): ";
@@ -112,11 +130,10 @@ void Customer::addUser() {
     } else {
         MemberShip = false;
     }
-    
+   
 }
 
 void Customer::displayUser() {
-    cout << "ID: " << CustomerId << endl;
     cout << "Name: " << Name << endl;
     cout << "Age: " << Age << endl;
     cout << "Gender: " << Gender << endl;
@@ -131,17 +148,24 @@ void Customer::displayUser() {
 
 }
 
-void Customer::registerCar() {
+// void Customer::showVehilce() {
+    
+// }
+
+void Customer::registerVehicle() {
     Vehicle vle;
     vle.addVehicle();
     v.push_back(vle);
     VehiclesRegistered++;
+    vle.displayVehicle();
 }
 
 int main() {
     Customer c;
     c.addUser();
     c.displayUser();
-    c.registerCar();
+    c.registerVehicle();
+
+    // c.showVehilce();
     return 0;
 }
