@@ -91,7 +91,9 @@ private:
     int RemainingTime;
 public:
     float fareCalculator(float, string);
+    void parkVehicle();
 };
+
 // Slot Class functions here...
 float Slot::fareCalculator(float hours, string vType) {
     float fare, num;
@@ -105,6 +107,7 @@ float Slot::fareCalculator(float hours, string vType) {
         fare += b.baseFare;
         fare += (num*b.hourlyFare);
     }
+    cout << fare << endl;
     return fare;
 
 }
@@ -119,6 +122,7 @@ private:
     int VehiclesRegistered;
     bool MemberShip;
     char MembershipType;
+    string Passwd;
     vector<Vehicle> v;
 public:
     void addUser();
@@ -129,9 +133,17 @@ public:
 };
 // Customer Class functions here...
 void Customer::addUser() {
-    string op;
+    string op, Passwd, temp2;
     cout << "Enter name(without spaces): ";
     cin >> Name;
+    cout << "Create new password(without spaces): ";
+    cin >> Passwd;
+    cout << "Confirm password: ";
+    cin >> temp2;
+    if (Passwd.compare(temp2)==0) {
+        this->Passwd = Passwd;
+        cout << "Password created successfully.!!" << endl;
+    }
     cout << "Enter age: ";
     cin >> Age;
     cout << "Enter Gender (M or F): ";
@@ -201,11 +213,12 @@ With named as:
 200-299 in second floor
 */
 int main() {
-    Customer c;
+    vector<Customer> customer;
     Slot s;
     int choice;
     string vcle1;
     do {
+        Customer c;
         cout << "1) Add User" << endl;
         cout << "2) Register Vehicle" << endl;
         cout << "3) Deposit amount to wallet" << endl;
@@ -219,6 +232,7 @@ int main() {
         {
         case 1:
             c.addUser();
+            customer.push_back(c);
             break;
         case 2:
             c.registerVehicle();
@@ -242,14 +256,14 @@ int main() {
             break;
         case 7:
             "Thank you, come again later :)";
+            break;
         }
-
         if (choice==7) {
             break;
         }
         cout << endl;
 
-    } while ((choice<7) && (choice>0));
+    } while ((choice<=7) && (choice>0));
 
     
     return 0;
