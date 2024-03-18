@@ -1,0 +1,10 @@
+Here's the idea for the project
+The process goes like
+An array of Customer class (with usrname and passwd)
+Each element in customer class has an array of vehicle class
+
+
+
+Parking a vehicle:
+Randomly generate a slot, and if slot is in parked slot, 
+then find till u get a free slot

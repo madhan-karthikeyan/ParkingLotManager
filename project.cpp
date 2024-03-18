@@ -89,14 +89,20 @@ private:
     int SlotNo;
     bool Vacancy;
     int RemainingTime;
+    string vehicleID;
 public:
-    float fareCalculator(float, string);
+    float fareCalculator();
     void parkVehicle();
 };
 
 // Slot Class functions here...
-float Slot::fareCalculator(float hours, string vType) {
-    float fare, num;
+float Slot::fareCalculator() {
+    float fare, num, hours;
+    string vType;
+    cout << "Enter duration(in hours): ";
+    cin >> hours;
+    cout << "Enter car(c) or bike(b): ";
+    cin >> vType;
     num = hours - 1.0;
     Car c;
     Bike b;
@@ -107,8 +113,12 @@ float Slot::fareCalculator(float hours, string vType) {
         fare += b.baseFare;
         fare += (num*b.hourlyFare);
     }
-    cout << fare << endl;
+    cout << "Your fare is " << fare << endl;
     return fare;
+
+}
+
+void parkVehicle() {
 
 }
 
@@ -216,7 +226,7 @@ int main() {
     vector<Customer> customer;
     Slot s;
     int choice;
-    string vcle1;
+    string vType;
     do {
         Customer c;
         cout << "1) Add User" << endl;
@@ -228,11 +238,11 @@ int main() {
         cout << "7) Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
+        cout << endl;
         switch (choice)
         {
         case 1:
             c.addUser();
-            customer.push_back(c);
             break;
         case 2:
             c.registerVehicle();
@@ -241,12 +251,7 @@ int main() {
             c.addAmountToWallet();
             break;
         case 4:
-            float hours;
-            cout << "Enter duration(in hours): ";
-            cin >> hours;
-            cout << "Enter car(c) or bike(b): ";
-            cin >> vcle1;
-            cout << "Your fare is " << s.fareCalculator(hours, vcle1) << endl;  
+            s.fareCalculator();
             break;
         case 5:
             c.displayUser();
@@ -258,13 +263,13 @@ int main() {
             "Thank you, come again later :)";
             break;
         }
+        customer.push_back(c);
         if (choice==7) {
             break;
         }
         cout << endl;
 
     } while ((choice<=7) && (choice>0));
-
     
     return 0;
 }
