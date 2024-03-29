@@ -12,7 +12,14 @@ Features:
 7) Display Vehicle details
 8) Add amount to wallet
 */
-
+bool passwordVerification(string usrname, string passwd, class Customer) {
+    string Name, Passwd;
+    cout << "Enter name: ";
+    cin >> Name;
+    cout << "Enter password: ";
+    cin >> Passwd;
+    for (int i=0;i<)
+}
 class ParkingLot {
 public:
     int VehicleIn;
