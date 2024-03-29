@@ -12,7 +12,7 @@ int main()
 	// numbers on every program run within range 0 to N-1 
 	for (int i = 0; i < 5; i++) 
 		cout << rand() % N << " "; 
-
+ 
 	return 0; 
 } 
 
