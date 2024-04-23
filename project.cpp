@@ -1,282 +1,359 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 using namespace std;
-/*
-Features:
-1) Add User
-2) Register Vehicle
-3) Park Vehicle
-4) Check if Vehicle is parked
-5) Display fare
-6) Display user details
-7) Display Vehicle details
-8) Add amount to wallet
-*/
-bool passwordVerification(string usrname, string passwd, class Customer) {
-    string Name, Passwd;
-    cout << "Enter name: ";
-    cin >> Name;
-    cout << "Enter password: ";
-    cin >> Passwd;
-    for (int i=0;i<)
-}
-class ParkingLot {
+
+class Person {
+protected:
+    string Name;
+    int Age;
+    char Gender;
+    long int PhoneNumber;
 public:
-    int VehicleIn;
-    int VehicleOut;
+    virtual void addUser() = 0;
+    virtual void displayUser() = 0;
 };
 
 class Vehicle {
-private:
+protected:
     string LicenseId;
     string VehicleModel;
     string VehicleColor;
     bool Membership;
     bool Parked;
     string SlotNo;
-public:
     string VehicleType;
-    void addVehicle();
-    void displayVehicle();
-};
-
-class Car : private Vehicle {
 public:
-    const float baseFare=200.0;
-    const float hourlyFare=50.0;
+    virtual void addVehicle() = 0;
+    virtual void displayVehicle() = 0;
+    virtual float fareCalculator() = 0;
+    virtual bool isParked() const { return Parked; }
+    virtual void setParked(bool parked) { Parked = parked; }
+    virtual string getLicenseId() const { return LicenseId; }
+    virtual string getSlotNo() const { return SlotNo; }
+    virtual void setSlotNo(string slotNo) { SlotNo = slotNo; }
+    virtual string getVehicleType() const { return VehicleType; }
+    virtual bool hasMembership() const { return Membership; }
 };
 
-class Bike : private Vehicle {
+class Car : public Vehicle {
 public:
-    const float baseFare=100.0;
-    const float hourlyFare=25.0;
+    void addVehicle() override {
+        cout << "Enter License ID: ";
+        cin >> LicenseId;
+        cout << "Enter Vehicle Model: ";
+        cin >> VehicleModel;
+        cout << "Enter Vehicle Color: ";
+        cin >> VehicleColor;
+        cout << "Is the vehicle a member (1 for yes, 0 for no): ";
+        cin >> Membership;
+        Parked = false;
+        VehicleType = "Car";
+    }
+
+    void displayVehicle() override {
+        cout << "License ID: " << LicenseId << endl;
+        cout << "Vehicle Model: " << VehicleModel << endl;
+        cout << "Vehicle Color: " << VehicleColor << endl;
+        cout << "Membership: " << (Membership ? "Yes" : "No") << endl;
+        cout << "Parked: " << (Parked ? "Yes" : "No") << endl;
+        cout << "Slot No: " << SlotNo << endl;
+        cout << "Vehicle Type: " << VehicleType << endl;
+    }
+
+    float fareCalculator() override {
+        float parkingCharge = 200.0;
+        if (hasMembership()) {
+            char membershipType;
+            cout << "Enter membership type (W for Weekly, M for Monthly, Y for Yearly): ";
+            cin >> membershipType;
+            switch (membershipType) {
+                case 'W':
+                    parkingCharge *= 0.97;
+                    break;
+                case 'M':
+                    parkingCharge *= 0.95;
+                    break;
+                case 'Y':
+                    parkingCharge *= 0.85;
+                    break;
+                default:
+                    cout << "Invalid membership type!" << endl;
+            }
+        }
+        return parkingCharge;
+    }
 };
 
-// Vehicle Class functions here...
-void Vehicle::addVehicle() {
-    string op;
-    cout << "Enter LicenseID: ";
-    cin >> LicenseId;
-    cout << "Enter Vehicle Brand: ";
-    cin >> VehicleModel;
-    cout << "Enter Vehicle color: ";
-    cin >> VehicleColor;
-    cout << "Enter Vehicle type: (car(c) or bike(b)): ";
-    cin >> VehicleType;
-    cout << "Add Vehicle to Membership? (yes(y) or no(n)): ";
-    cin >> op;
-    if (op=="y") {
-       Membership = true;
-    } else {
-        Membership = false;
+class Bike : public Vehicle {
+public:
+    void addVehicle() override {
+        cout << "Enter License ID: ";
+        cin >> LicenseId;
+        cout << "Enter Vehicle Model: ";
+        cin >> VehicleModel;
+        cout << "Enter Vehicle Color: ";
+        cin >> VehicleColor;
+        cout << "Is the vehicle a member (1 for yes, 0 for no): ";
+        cin >> Membership;
+        Parked = false;
+        VehicleType = "Bike";
     }
-}
 
-void Vehicle::displayVehicle() {
-    cout << "License ID: " << LicenseId << endl;
-    cout << "Vehicle Model: " << VehicleModel << endl;
-    cout << "Vehicle Color: " << VehicleColor << endl;
-    cout << "Vehicle Type: " << VehicleType << endl;
-    if (Membership==true) {
-        cout << "Membership: " << "Yes" << endl;
-    } else {
-        cout << "Membership: " << "No" << endl;
+    void displayVehicle() override {
+        cout << "License ID: " << LicenseId << endl;
+        cout << "Vehicle Model: " << VehicleModel << endl;
+        cout << "Vehicle Color: " << VehicleColor << endl;
+        cout << "Membership: " << (Membership ? "Yes" : "No") << endl;
+        cout << "Parked: " << (Parked ? "Yes" : "No") << endl;
+        cout << "Slot No: " << SlotNo << endl;
+        cout << "Vehicle Type: " << VehicleType << endl;
     }
-    cout << endl;
-    // if (Parked==true) {
-    //     cout << "Vehicle is parked: " << "Yes" << endl;
-    // } else {
-    //     cout << "Vehicle is parked: " << "No" << endl;
-    // }
-    
-}
+
+    float fareCalculator() override {
+        float parkingCharge = 100.0;
+        if (hasMembership()) {
+            char membershipType;
+            cout << "Enter membership type (W for Weekly, M for Monthly, Y for Yearly): ";
+            cin >> membershipType;
+            switch (membershipType) {
+                case 'W':
+                    parkingCharge *= 0.97;
+                    break;
+                case 'M':
+                    parkingCharge *= 0.95;
+                    break;
+                case 'Y':
+                    parkingCharge *= 0.85;
+                    break;
+                default:
+                    cout << "Invalid membership type!" << endl;
+            }
+        }
+        return parkingCharge;
+    }
+};
 
 class Slot {
 private:
-    int SlotNo;
+    string SlotNo;
     bool Vacancy;
-    int RemainingTime;
-    string vehicleID;
+    Vehicle *parkedVehicle;
 public:
-    float fareCalculator();
-    void parkVehicle();
+    Slot(string slotNo) : SlotNo(slotNo), Vacancy(true), parkedVehicle(nullptr) {}
+    bool isVacant() const { return Vacancy; }
+    void parkVehicle(Vehicle *vehicle);
+    void removeVehicle();
 };
 
-// Slot Class functions here...
-float Slot::fareCalculator() {
-    float fare, num, hours;
-    string vType;
-    cout << "Enter duration(in hours): ";
-    cin >> hours;
-    cout << "Enter car(c) or bike(b): ";
-    cin >> vType;
-    num = hours - 1.0;
-    Car c;
-    Bike b;
-    if (vType.compare("c")==0) {
-        fare += c.baseFare;
-        fare += (num*c.hourlyFare);
-    } else if (vType.compare("b")==0) {
-        fare += b.baseFare;
-        fare += (num*b.hourlyFare);
+void Slot::parkVehicle(Vehicle *vehicle) {
+    if (isVacant()) {
+        parkedVehicle = vehicle;
+        vehicle->setParked(true);
+        vehicle->setSlotNo(SlotNo);
+        Vacancy = false;
+        cout << "Vehicle parked successfully in Slot " << SlotNo << endl;
+    } else {
+        cout << "Slot " << SlotNo << " is already occupied!" << endl;
     }
-    cout << "Your fare is " << fare << endl;
-    return fare;
-
 }
 
-void parkVehicle() {
-
+void Slot::removeVehicle() {
+    if (!isVacant()) {
+        parkedVehicle->setParked(false);
+        parkedVehicle->setSlotNo("");
+        Vacancy = true;
+        parkedVehicle = nullptr;
+        cout << "Vehicle removed from Slot " << SlotNo << endl;
+    } else {
+        cout << "Slot " << SlotNo << " is already vacant!" << endl;
+    }
 }
 
-class Customer {
-private: 
-    string Name;
-    int Age;
-    char Gender;
-    long int PhoneNumber;
+class Customer : public Person {
+private:
     int WalletAmount;
-    int VehiclesRegistered;
-    bool MemberShip;
-    char MembershipType;
-    string Passwd;
-    vector<Vehicle> v;
+    vector<Vehicle*> vehicles;
 public:
-    void addUser();
-    void displayUser();
-    void registerVehicle();
-    void addAmountToWallet();
-    void showVehilce();
+    void addUser() override {
+        cout << "Enter Name: ";
+        cin.ignore();
+        getline(cin, Name);
+        cout << "Enter Age: ";
+        cin >> Age;
+        cout << "Enter Gender (M/F): ";
+        cin >> Gender;
+        cout << "Enter Phone Number: ";
+        cin >> PhoneNumber;
+        cout << "Enter Wallet Amount: ";
+        cin >> WalletAmount;
+    }
+
+    void displayUser() override {
+        cout << "Name: " << Name << endl;
+        cout << "Age: " << Age << endl;
+        cout << "Gender: " << Gender << endl;
+        cout << "Phone Number: " << PhoneNumber << endl;
+        cout << "Wallet Amount: " << WalletAmount << endl;
+    }
+
+    void registerVehicle() {
+        char choice;
+        cout << "Enter vehicle type (C for Car, B for Bike): ";
+        cin >> choice;
+        Vehicle *newVehicle;
+        if (choice == 'C') {
+            newVehicle = new Car();
+        } else if (choice == 'B') {
+            newVehicle = new Bike();
+        } else {
+            cout << "Invalid vehicle type!" << endl;
+            return;
+        }
+        newVehicle->addVehicle();
+        vehicles.push_back(newVehicle);
+        cout << "Vehicle Registered Successfully!" << endl;
+    }
+
+    void addAmountToWallet() {
+        int amount;
+        cout << "Enter amount to add to wallet: ";
+        cin >> amount;
+        WalletAmount += amount;
+        cout << "Amount added to wallet successfully!" << endl;
+    }
+
+    void showVehicles() {
+        if (vehicles.empty()) {
+            cout << "No vehicles registered!" << endl;
+        } else {
+            for (int i = 0; i < vehicles.size(); ++i) {
+                cout << "Vehicle " << i+1 << ":" << endl;
+                vehicles[i]->displayVehicle();
+            }
+        }
+    }
+
+    void parkVehicle() {
+        string licenseID;
+        cout << "Enter License ID of the vehicle to park: ";
+        cin >> licenseID;
+
+        for (Vehicle *vehicle : vehicles) {
+            if (vehicle->getLicenseId() == licenseID) {
+                Slot *slot = new Slot("A1");
+                slot->parkVehicle(vehicle);
+
+                float parkingCharge = vehicle->fareCalculator();
+                if (WalletAmount >= parkingCharge) {
+                    WalletAmount -= parkingCharge;
+                    cout << "Parking charge of $" << fixed << setprecision(2) << parkingCharge << " deducted from wallet." << endl;
+                } else {
+                    cout << "Insufficient funds in wallet to park the vehicle!" << endl;
+                }
+
+                delete slot; // Deallocate memory
+                return;
+            }
+        }
+
+        cout << "Vehicle with License ID " << licenseID << " not found!" << endl;
+    }
 };
-// Customer Class functions here...
-void Customer::addUser() {
-    string op, Passwd, temp2;
-    cout << "Enter name(without spaces): ";
-    cin >> Name;
-    cout << "Create new password(without spaces): ";
-    cin >> Passwd;
-    cout << "Confirm password: ";
-    cin >> temp2;
-    if (Passwd.compare(temp2)==0) {
-        this->Passwd = Passwd;
-        cout << "Password created successfully.!!" << endl;
-    }
-    cout << "Enter age: ";
-    cin >> Age;
-    cout << "Enter Gender (M or F): ";
-    cin >> Gender;
-    cout << "Enter Phone number: ";
-    cin >> PhoneNumber;
-    cout << "Add amount to wallet: ";
-    cin >> WalletAmount;
-    // cout << "No of : ";
-    // cin >> Name;
-    cout << "Need Membership? (y or n) ";
-    cin >> op;
-    if (op=="y") {
-        cout << "Enter Membership type: (Weekly(w) or Monthly(m) or Yearly(y)): ";
-        cin >> MembershipType;
-        MemberShip = true;
-    } else {
-        MemberShip = false;
-    }
-   
+
+void menu() {
+    cout << "===== Menu =====" << endl;
+    cout << "1. Register Vehicle" << endl;
+    cout << "2. Add Amount to Wallet" << endl;
+    cout << "3. Show Vehicles" << endl;
+    cout << "4. Park Vehicle" << endl;
+    cout << "5. Display User Details" << endl;
+    cout << "6. Exit" << endl;
+    cout << "================" << endl;
 }
 
-void Customer::displayUser() {
-    cout << "Name: " << Name << endl;
-    cout << "Age: " << Age << endl;
-    cout << "Gender: " << Gender << endl;
-    cout << "Phone number: " << PhoneNumber << endl;
-    cout << "Balance: " << WalletAmount << endl;
-    if (MemberShip==true) {
-        cout << "Membership: " << "Yes" << endl;
-        cout << "Membership type: " << MembershipType << endl;
-    } else {
-        cout << "Membership: " << "No" << endl;
-    }
-
-}
-
-void Customer::showVehilce() {
-    for (int i=0; i<v.size(); i++) {
-        v[i].displayVehicle();
-        cout << endl;
-    }
-}
-
-void Customer::registerVehicle() {
-    Vehicle vle;
-    vle.addVehicle();
-    v.push_back(vle);
-    VehiclesRegistered++;
-    cout << "Vehicle registered successfully!!" << endl;
-}
-
-void Customer::addAmountToWallet() {
-    int num;
-    cout << "Enter amount: ";
-    cin >> num;
-    WalletAmount += num;
-    cout << "Amount added successfully!!" << endl;
-}
-/*
-Assumptions for parking lot:
-This building has 3 floors
-each floor has 99 slots 
-With named as:
-1-99 in ground floor
-100-199 in first floor
-200-299 in second floor
-*/
 int main() {
-    vector<Customer> customer;
-    Slot s;
+    int userCount;
+    cout << "Enter the number of users: ";
+    cin >> userCount;
+    Customer *users = new Customer[userCount];
+
+    if (userCount <= 0) {
+        cout << "Invalid number of users!" << endl;
+        delete[] users; // Deallocate memory
+        return 1;
+    }
+
+    for (int i = 0; i < userCount; ++i) {
+        cout << "User " << i+1 << ":" << endl;
+        users[i].addUser();
+    }
+
     int choice;
-    string vType;
     do {
-        Customer c;
-        cout << "1) Add User" << endl;
-        cout << "2) Register Vehicle" << endl;
-        cout << "3) Deposit amount to wallet" << endl;
-        cout << "4) Calculate fare" << endl;
-        cout << "5) Show user details" << endl;
-        cout << "6) Show vehicle details" << endl;
-        cout << "7) Exit" << endl;
+        menu();
         cout << "Enter your choice: ";
         cin >> choice;
-        cout << endl;
-        switch (choice)
-        {
-        case 1:
-            c.addUser();
-            break;
-        case 2:
-            c.registerVehicle();
-            break;
-        case 3:
-            c.addAmountToWallet();
-            break;
-        case 4:
-            s.fareCalculator();
-            break;
-        case 5:
-            c.displayUser();
-            break;
-        case 6:
-            c.showVehilce();
-            break;
-        case 7:
-            "Thank you, come again later :)";
-            break;
-        }
-        customer.push_back(c);
-        if (choice==7) {
-            break;
-        }
-        cout << endl;
 
-    } while ((choice<=7) && (choice>0));
-    
+        switch(choice) {
+            case 1:
+                cout << "Enter user number to register vehicle: ";
+                int userNumRegister;
+                cin >> userNumRegister;
+                if (userNumRegister >= 1 && userNumRegister <= userCount) {
+                    users[userNumRegister - 1].registerVehicle();
+                } else {
+                    cout << "Invalid user number!" << endl;
+                }
+                break;
+            case 2:
+                cout << "Enter user number to add amount to wallet: ";
+                int userNumAddAmount;
+                cin >> userNumAddAmount;
+                if (userNumAddAmount >= 1 && userNumAddAmount <= userCount) {
+                    users[userNumAddAmount - 1].addAmountToWallet();
+                } else {
+                    cout << "Invalid user number!" << endl;
+                }
+                break;
+            case 3:
+                cout << "Enter user number to show vehicles: ";
+                int userNumShowVehicles;
+                cin >> userNumShowVehicles;
+                if (userNumShowVehicles >= 1 && userNumShowVehicles <= userCount) {
+                    users[userNumShowVehicles - 1].showVehicles();
+                } else {
+                    cout << "Invalid user number!" << endl;
+                }
+                break;
+            case 4:
+                cout << "Enter user number to park vehicle: ";
+                int userNumParkVehicle;
+                cin >> userNumParkVehicle;
+                if (userNumParkVehicle >= 1 && userNumParkVehicle <= userCount) {
+                    users[userNumParkVehicle - 1].parkVehicle();
+                } else {
+                    cout << "Invalid user number!" << endl;
+                }
+                break;
+            case 5:
+                cout << "Enter user number to display details: ";
+                int userNumDisplayDetails;
+                cin >> userNumDisplayDetails;
+                if (userNumDisplayDetails >= 1 && userNumDisplayDetails <= userCount) {
+                    users[userNumDisplayDetails - 1].displayUser();
+                } else {
+                    cout << "Invalid user number!" << endl;
+                }
+                break;
+            case 6:
+                cout << "Exiting program..." << endl;
+                break;
+            default:
+                cout << "Invalid choice! Please enter again." << endl;
+        }
+    } while (choice != 6);
+
+    delete[] users; // Deallocate memory
     return 0;
 }
