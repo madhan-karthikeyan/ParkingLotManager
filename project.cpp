@@ -34,14 +34,15 @@ public:
     virtual void setParked(bool parked) { Parked = parked; }
     virtual string getLicenseId() const { return LicenseId; }
     virtual string getSlotNo() const { return SlotNo; }
-    virtual void setSlotNo(string slotNo) { SlotNo = slotNo; }
+    virtual void setSlotNo(int slotNo) { SlotNo = slotNo; }
     virtual string getVehicleType() const { return VehicleType; }
     virtual bool hasMembership() const { return Membership; }
 };
 
-
+// Car class is inherited from Vehicle class 
 class Car : public Vehicle {
 public:
+    // Overriding functions of vehicle class in the inherited class
     void addVehicle() override {
         cout << "Enter License ID: ";
         cin >> LicenseId;
@@ -49,7 +50,7 @@ public:
         cin >> VehicleModel;
         cout << "Enter Vehicle Color: ";
         cin >> VehicleColor;
-        cout << "Is the vehicle a member (1 for yes, 0 for no): ";
+        cout << "Do you want membership for this car? (1 for yes, 0 for no): ";
         cin >> Membership;
         Parked = false;
         VehicleType = "Car";
@@ -94,8 +95,10 @@ public:
     }
 };
 
+// Bike class is inherited from vehicle class
 class Bike : public Vehicle {
 public:
+    // Overriding functions of vehicle class in the inherited class
     void addVehicle() override {
         cout << "Enter License ID: ";
         cin >> LicenseId;
@@ -103,7 +106,7 @@ public:
         cin >> VehicleModel;
         cout << "Enter Vehicle Color: ";
         cin >> VehicleColor;
-        cout << "Is the vehicle a member (1 for yes, 0 for no): ";
+        cout << "Do you want membership for this bike? (1 for yes, 0 for no): ";
         cin >> Membership;
         Parked = false;
         VehicleType = "Bike";
@@ -143,21 +146,21 @@ public:
     }
 };
 
+// Slot is a base class
 class Slot {
 private:
-    string SlotNo;
+    int SlotNo;
     bool Vacancy;
     vector<Vehicle*> parkedVehicles; // Collection of vehicles parked in the slot
 public:
-    Slot(string slotNo) : SlotNo(slotNo), Vacancy(true) {}
+    Slot(int slotNo) : SlotNo(slotNo), Vacancy(true) {}
     bool isVacant() const { return Vacancy; }
     void parkVehicle(Vehicle *vehicle);
     void removeVehicle();
 };
-
+static int SlotCount; // Set slot number while parking a vehicle
 void Slot::parkVehicle(Vehicle *vehicle) {
-    if (isVacant()) {
-        parkedVehicles.push_back(vehicle);
+    if (isVacant()) { 
         vehicle->setParked(true);
         vehicle->setSlotNo(SlotNo);
         Vacancy = false;
@@ -181,10 +184,13 @@ void Slot::removeVehicle() {
         cout << "Slot " << SlotNo << " is already vacant!" << endl;
     }
 }
+
+// Customer class is inherited from Person class
 class Customer : public Person {
 private:
     int WalletAmount;
     vector<Vehicle*> vehicles;
+
 public:
 void addUser() override {
     cout << "Enter Name: ";
@@ -208,76 +214,97 @@ void addUser() override {
         cin >> PhoneNumber;
     }
 
-    cout << "Enter Wallet Amount: ";
+    cout << "Enter Wallet Amount(min Rs. 200): ";
     cin >> WalletAmount;
+    while (WalletAmount < 200) {
+        cout << "Enter Wallet Amount (min Rs. 200): ";
+        cin >> WalletAmount;
+    }
+    cout << "Amount Rs." << WalletAmount << " added successfully!!" << endl;
 }
 
+void displayUser() override {
+    cout << "Name: " << Name << endl;
+    cout << "Age: " << Age << endl;
+    cout << "Gender: " << Gender << endl;
+    cout << "Phone Number: " << PhoneNumber << endl;
+    cout << "Wallet Amount: " << WalletAmount << endl;
+}
 
-    void displayUser() override {
-        cout << "Name: " << Name << endl;
-        cout << "Age: " << Age << endl;
-        cout << "Gender: " << Gender << endl;
-        cout << "Phone Number: " << PhoneNumber << endl;
-        cout << "Wallet Amount: " << WalletAmount << endl;
+void registerVehicle() {
+    char choice;
+    cout << "Enter vehicle type (C for Car, B for Bike): ";
+    cin >> choice;
+    Vehicle *newVehicle;
+    if (choice == 'C') {
+        newVehicle = new Car();
+    } else if (choice == 'B') {
+        newVehicle = new Bike();
+    } else {
+        cout << "Invalid vehicle type!" << endl;
+        return;
+    }
+    newVehicle->addVehicle();
+    vehicles.push_back(newVehicle);
+    cout << "Vehicle Registered Successfully!" << endl;
+}
+
+void addAmountToWallet() {
+    int amount;
+    cout << "Enter amount to add to wallet: ";
+    cin >> amount;
+    WalletAmount += amount;
+    cout << "Amount added to wallet successfully!" << endl;
+}
+
+void showVehicles() {
+    if (vehicles.empty()) {
+        cout << "No vehicles registered!" << endl;
+    } else {
+        for (int i = 0; i < vehicles.size(); ++i) {
+            cout << "Vehicle " << i+1 << ":" << endl;
+            vehicles[i]->displayVehicle();
+        }
+    }
+}
+
+void parkVehicle() {
+    string licenseID;
+    cout << "Enter the license ID of the vehicle to park: ";
+    cin >> licenseID;
+
+    // Find the vehicle with the provided license ID
+    Vehicle *vehicleToPark = nullptr;
+    for (Vehicle *vehicle : vehicles) {
+        if (vehicle->getLicenseId() == licenseID) {
+            vehicleToPark = vehicle;
+            break;
+        }
     }
 
-    void registerVehicle() {
-        char choice;
-        cout << "Enter vehicle type (C for Car, B for Bike): ";
-        cin >> choice;
-        Vehicle *newVehicle;
-        if (choice == 'C') {
-            newVehicle = new Car();
-        } else if (choice == 'B') {
-            newVehicle = new Bike();
+    if (vehicleToPark != nullptr) {
+        // Assuming you have a Slot object available, let's say "slot"
+        Slot *slot = new Slot(++SlotCount);
+        slot->parkVehicle(vehicleToPark);
+
+        float parkingCharge = vehicleToPark->fareCalculator();
+        if (WalletAmount >= parkingCharge) {
+            WalletAmount -= parkingCharge;
+            cout << "Parking charge of Rs." << fixed << setprecision(2) << parkingCharge << " deducted from wallet." << endl;
+            cout << "Remaining amount: Rs." << WalletAmount << endl;
         } else {
-            cout << "Invalid vehicle type!" << endl;
-            return;
-        }
-        newVehicle->addVehicle();
-        vehicles.push_back(newVehicle);
-        cout << "Vehicle Registered Successfully!" << endl;
-    }
-
-    void addAmountToWallet() {
-        int amount;
-        cout << "Enter amount to add to wallet: ";
-        cin >> amount;
-        WalletAmount += amount;
-        cout << "Amount added to wallet successfully!" << endl;
-    }
-
-    void showVehicles() {
-        if (vehicles.empty()) {
-            cout << "No vehicles registered!" << endl;
-        } else {
-            for (int i = 0; i < vehicles.size(); ++i) {
-                cout << "Vehicle " << i+1 << ":" << endl;
-                vehicles[i]->displayVehicle();
-            }
-        }
-    }
-
-    void parkVehicle() {
-        string licenseID;
-                Slot *slot = new Slot("A1");
-                slot->parkVehicle(vehicle);
-
-                float parkingCharge = vehicle->fareCalculator();
-                if (WalletAmount >= parkingCharge) {
-                    WalletAmount -= parkingCharge;
-                    cout << "Parking charge of Rs." << fixed << ((int)(parkingCharge * 100)) / 100.0 << " deducted from wallet." << endl;
-                } else {
-                    cout << "Insufficient funds in wallet to park the vehicle!" << endl;
-                }
-
-                delete slot; // Deallocate memory
-                return;
-            }
+            cout << "Insufficient funds in wallet to park the vehicle!" << endl;
+            // Remove the vehicle from the slot since parking failed due to insufficient funds
+            slot->removeVehicle();
         }
 
-        cout << "Vehicle with License ID " << licenseID << " not found!" << endl;
+        delete slot; // Deallocate memory
+        return;
     }
+
+    cout << "Vehicle with License ID " << licenseID << " not found!" << endl;
+}
+
 };
 
 void menu() {
