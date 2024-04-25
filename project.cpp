@@ -1,14 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+
 using namespace std;
+
+// Creating two base classes: Person and Vehicle
 
 class Person {
 protected:
     string Name;
     int Age;
     char Gender;
-    long int PhoneNumber;
+    string PhoneNumber;
 public:
     virtual void addUser() = 0;
     virtual void displayUser() = 0;
@@ -35,6 +38,7 @@ public:
     virtual string getVehicleType() const { return VehicleType; }
     virtual bool hasMembership() const { return Membership; }
 };
+
 
 class Car : public Vehicle {
 public:
@@ -68,6 +72,11 @@ public:
             cout << "Enter membership type (W for Weekly, M for Monthly, Y for Yearly): ";
             cin >> membershipType;
             switch (membershipType) {
+                /*
+                3% discount for weekly membership
+                5% discount for monthly membership
+                15% discount for yearly membership
+                */
                 case 'W':
                     parkingCharge *= 0.97;
                     break;
@@ -175,19 +184,32 @@ private:
     int WalletAmount;
     vector<Vehicle*> vehicles;
 public:
-    void addUser() override {
-        cout << "Enter Name: ";
-        cin.ignore();
-        getline(cin, Name);
-        cout << "Enter Age: ";
+void addUser() override {
+    cout << "Enter Name: ";
+    cin.ignore();
+    getline(cin, Name);
+
+    cout << "Enter Age: ";
+    cin >> Age;
+    while (Age < 18) {
+        cout << "Age must be 18 or above. Enter Age again: ";
         cin >> Age;
-        cout << "Enter Gender (M/F): ";
-        cin >> Gender;
-        cout << "Enter Phone Number: ";
-        cin >> PhoneNumber;
-        cout << "Enter Wallet Amount: ";
-        cin >> WalletAmount;
     }
+
+    cout << "Enter Gender (M/F): ";
+    cin >> Gender;
+
+    cout << "Enter Phone Number: ";
+    cin >> PhoneNumber;
+    while (PhoneNumber.length() != 10) {
+        cout << "Phone Number must be exactly 10 digits. Enter Phone Number again: ";
+        cin >> PhoneNumber;
+    }
+
+    cout << "Enter Wallet Amount: ";
+    cin >> WalletAmount;
+}
+
 
     void displayUser() override {
         cout << "Name: " << Name << endl;
@@ -247,7 +269,7 @@ public:
                 float parkingCharge = vehicle->fareCalculator();
                 if (WalletAmount >= parkingCharge) {
                     WalletAmount -= parkingCharge;
-                    cout << "Parking charge of $" << fixed << setprecision(2) << parkingCharge << " deducted from wallet." << endl;
+                    cout << "Parking charge of Rs." << fixed << ((int)(parkingCharge * 100)) / 100.0 << " deducted from wallet." << endl;
                 } else {
                     cout << "Insufficient funds in wallet to park the vehicle!" << endl;
                 }
