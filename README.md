@@ -3,7 +3,6 @@
 
 ## Overview
 This program is a simple parking lot management system implemented in C++. It allows users to register vehicles, add funds to their wallet, park vehicles, and view their details and registered vehicles. The program is built using Object-Oriented Programming (OOP) concepts.
-Classes blueprint: https://roadmap.sh/r/embed?id=65f27805b9800126875c5f09 <br />
 
 ## Features
 - **User Management**: Users can register with their name, age, gender, phone number, and initial wallet amount.
