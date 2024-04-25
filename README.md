@@ -1,4 +1,3 @@
-# ParkingLotManager
 # Parking Lot Management System
 
 ## Overview
