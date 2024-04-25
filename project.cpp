@@ -147,9 +147,9 @@ class Slot {
 private:
     string SlotNo;
     bool Vacancy;
-    Vehicle *parkedVehicle;
+    vector<Vehicle*> parkedVehicles; // Collection of vehicles parked in the slot
 public:
-    Slot(string slotNo) : SlotNo(slotNo), Vacancy(true), parkedVehicle(nullptr) {}
+    Slot(string slotNo) : SlotNo(slotNo), Vacancy(true) {}
     bool isVacant() const { return Vacancy; }
     void parkVehicle(Vehicle *vehicle);
     void removeVehicle();
@@ -157,7 +157,7 @@ public:
 
 void Slot::parkVehicle(Vehicle *vehicle) {
     if (isVacant()) {
-        parkedVehicle = vehicle;
+        parkedVehicles.push_back(vehicle);
         vehicle->setParked(true);
         vehicle->setSlotNo(SlotNo);
         Vacancy = false;
@@ -169,16 +169,18 @@ void Slot::parkVehicle(Vehicle *vehicle) {
 
 void Slot::removeVehicle() {
     if (!isVacant()) {
-        parkedVehicle->setParked(false);
-        parkedVehicle->setSlotNo("");
-        Vacancy = true;
-        parkedVehicle = nullptr;
+        // Remove the vehicle from the parked vehicles list
+        parkedVehicles.pop_back(); // Assuming you remove the last parked vehicle
+        // If the slot is empty after removing the vehicle, update vacancy status
+        if (parkedVehicles.empty()) {
+            Vacancy = true;
+            cout << "Slot " << SlotNo << " is now vacant." << endl;
+        }
         cout << "Vehicle removed from Slot " << SlotNo << endl;
     } else {
         cout << "Slot " << SlotNo << " is already vacant!" << endl;
     }
 }
-
 class Customer : public Person {
 private:
     int WalletAmount;
@@ -258,11 +260,6 @@ void addUser() override {
 
     void parkVehicle() {
         string licenseID;
-        cout << "Enter License ID of the vehicle to park: ";
-        cin >> licenseID;
-
-        for (Vehicle *vehicle : vehicles) {
-            if (vehicle->getLicenseId() == licenseID) {
                 Slot *slot = new Slot("A1");
                 slot->parkVehicle(vehicle);
 
